@@ -3,17 +3,7 @@ import argparse
 import torch
 from utils.misc import pprint
 from utils.gpu_tools import set_gpu
-from trainer.new import NewTrainer
 from trainer.new_cross_ent import NewCrossTrainer
-
-from trainer.cope import CopeTrainer
-from trainer.OnPro import OnProTrainer
-from trainer.ambm import MetaTrainer
-
-from trainer.Baseline import BaseTrainer
-from trainer.ISOL import ISOLTrainer
-from trainer.Static import StaticTrainer
-
 
 #from trainer.meta_subject_agnostic import MetaTrainerAgnostic
 import random
@@ -29,10 +19,10 @@ if __name__ == '__main__':
                         choices=['meta_train', 'meta_eval'])  # Phase
     
     # rull_all
-    parser.add_argument('--run_all', type=bool, default=True)  # Run all styles and datasets
+    parser.add_argument('--run_all', type=bool, default=False)  # Run all styles and datasets
     
-    parser.add_argument('--training_style', type=str, default='Baseline',
-                        choices=['OPWA', 'COPE','OnPro','Baseline','NEW_Cross', 'ISOL','AMBM', 'Static'])  # Training style
+    parser.add_argument('--training_style', type=str, default='OPWA',
+                        choices=['OPWA'])  # Training style
     # Manual seed for PyTorch, "0" means using random seed
     parser.add_argument('--seed', type=int, default=48)
     parser.add_argument('--gpu', default='0')  # GPU id
@@ -127,11 +117,11 @@ if __name__ == '__main__':
 
     if args.run_all:
         # if run all styles and datasets
-        for training_style in ['COPE', 'OnPro','Baseline', 'OPWA','AMBM', 'ISOL']:#
+        for training_style in ['OPWA']:
             print('Training style:', training_style)
 
             if args.modality == 'EEG':
-                for dataset in ['BCI_IV_2a']: #['BCI_IV_2a', 'AMIGOS', 'DEAP','PPB_EMO']:
+                for dataset in ['BCI_IV_2a', 'AMIGOS', 'DEAP','PPB_EMO']:
                     print('Dataset:', dataset)
                     args.dataset = dataset
                     args.training_style = training_style
@@ -154,30 +144,8 @@ if __name__ == '__main__':
                         args.subject_range = 42
 
                         
-                    if args.training_style == 'NEW':
-                        trainer = NewTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'COPE':
-                        trainer = CopeTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'OnPro':
-                        trainer = OnProTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'Baseline':
-                        trainer = BaseTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'ISOL':
-                        trainer = ISOLTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'OPWA':
+                    if args.training_style == 'OPWA':
                         trainer = NewCrossTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'AMBM':
-                        trainer = MetaTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'Static':
-                        args.max_episode = 30
-                        trainer = StaticTrainer(args)
                         trainer.train()
                     else:
                         raise ValueError('Please set correct training style.')
@@ -191,58 +159,16 @@ if __name__ == '__main__':
                         args.start_range = 1
                         args.subject_range = 41
                         args.max_episode = 10    
-
-                    if args.training_style == 'NEW':
-                        trainer = NewTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'COPE':
-                        trainer = CopeTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'OnPro':
-                        trainer = OnProTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'Baseline':
-                        trainer = BaseTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'ISOL':
-                        trainer = ISOLTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'NEW_Cross':
+                    if args.training_style == 'OPWA':
                         trainer = NewCrossTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'AMBM':
-                        trainer = MetaTrainer(args)
-                        trainer.train()
-                    elif args.training_style == 'Static':
-                        args.max_episode = 30
-                        trainer = StaticTrainer(args)
                         trainer.train()
                     else:
                         raise ValueError('Please set correct training style.')                    
     else:
         # Print the training information only data, style, 
         # start training
-        if args.training_style == 'COPE':
-            trainer = CopeTrainer(args)
-            trainer.train()
-        elif args.training_style == 'OnPro':
-            trainer = OnProTrainer(args)
-            trainer.train()
-        elif args.training_style == 'Baseline':
-            trainer = BaseTrainer(args)
-            trainer.train()
-        elif args.training_style == 'OPWA':
+        if args.training_style == 'OPWA':
             trainer = NewCrossTrainer(args)
-            trainer.train()
-        elif args.training_style == 'ISOL':
-            trainer = ISOLTrainer(args)
-            trainer.train()
-        elif args.training_style == 'AMBM':
-            trainer = MetaTrainer(args)
-            trainer.train()
-        elif args.training_style == 'Static':
-            args.max_episode = 30
-            trainer = StaticTrainer(args)
             trainer.train()
         else:
             raise ValueError('Please set correct training style.')
